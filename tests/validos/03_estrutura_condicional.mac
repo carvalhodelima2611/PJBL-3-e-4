@@ -1,0 +1,24 @@
+/* Cobre: decisao (cond/casocontrario), incluindo a cadeia
+ * cond -> casocontrario cond -> casocontrario final. */
+outrafuncao inteira classificar(inteira nota) @
+[
+    cond ( nota > 90 ) edai
+    [
+        respost 1;
+    ]
+    casocontrario cond ( nota > 70 ) edai
+    [
+        respost 2;
+    ]
+    casocontrario edai
+    [
+        respost 3;
+    ]
+]
+
+inteira principal() @
+[
+    inteira r;
+    r receba classificar(85);
+    respost 0;
+]

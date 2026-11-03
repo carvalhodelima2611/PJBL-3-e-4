@@ -1,0 +1,22 @@
+/* Cobre: uso de leitura/escrita de dados (via parametros e retorno de
+ * funcao, unico mecanismo de entrada/saida definido pela especificacao
+ * de Macaronica - ver docs/decisoes.md, ambiguidade adicional 4),
+ * raiz(), potencia e divisao inteira. */
+outrafuncao duplocarpado hipotenusa(flut cateto1, flut cateto2) @
+[
+    respost raiz((cateto1 ^ 2) + (cateto2 ^ 2));
+]
+
+outrafuncao inteira dividirInteiro(inteira a, inteira b) @
+[
+    respost a // b;
+]
+
+inteira principal() @
+[
+    duplocarpado h;
+    inteira q;
+    h receba hipotenusa(3, 4);
+    q receba dividirInteiro(17, 5);
+    respost 0;
+]

@@ -1,0 +1,22 @@
+/* Cobre: declaracao de variavel de cada tipo, declaracao de vetor,
+ * atribuicao e acesso a vetor por indice. */
+inteira principal() @
+[
+    inteira idade;
+    flut altura;
+    duplocarpado precisao;
+    bool ativo;
+    palavra nome;
+    inteira vet{5} notas;
+
+    idade receba 20;
+    altura receba 1.75;
+    precisao receba 3.14159;
+    ativo receba VER;
+    nome receba "Ana";
+
+    notas{0} receba 10;
+    notas{1} receba 9;
+
+    respost 0;
+]

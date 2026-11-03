@@ -1,0 +1,6 @@
+/* Erro sintatico: o bloco da funcao principal nunca e fechado com ']'. */
+inteira principal() @
+[
+    inteira x;
+    x receba 1;
+    respost 0;

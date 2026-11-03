@@ -1,0 +1,6 @@
+/* Erro semantico: 'y' e usado sem ter sido declarado. */
+inteira principal() @
+[
+    y receba 5;
+    respost 0;
+]

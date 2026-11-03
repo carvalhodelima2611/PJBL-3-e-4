@@ -1,0 +1,13 @@
+/* Erro semantico: a funcao 'somar' espera 2 argumentos inteiros, mas
+ * e chamada com 3 argumentos. */
+outrafuncao inteira somar(inteira a, inteira b) @
+[
+    respost a + b;
+]
+
+inteira principal() @
+[
+    inteira r;
+    r receba somar(1, 2, 3);
+    respost 0;
+]

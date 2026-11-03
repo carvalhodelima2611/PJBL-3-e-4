@@ -1,0 +1,22 @@
+/* Cobre: as duas estruturas de repeticao exigidas pelo enunciado
+ * (repete/for e durante/while), com operadores logicos na condicao. */
+inteira principal() @
+[
+    inteira i;
+    inteira soma;
+    bool continuar;
+
+    soma receba 0;
+    repete ( i receba 0 , i < 10 , i receba i + 1 ) edai
+    [
+        soma receba soma + i;
+    ]
+
+    continuar receba VER;
+    durante ( soma < 1000 E continuar == VER ) edai
+    [
+        soma receba soma + soma;
+    ]
+
+    respost 0;
+]

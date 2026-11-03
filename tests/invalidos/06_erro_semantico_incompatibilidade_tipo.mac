@@ -1,0 +1,7 @@
+/* Erro semantico adicional: atribuicao de inteira a uma variavel bool. */
+inteira principal() @
+[
+    bool ligado;
+    ligado receba 5;
+    respost 0;
+]

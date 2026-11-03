@@ -1,0 +1,7 @@
+/* Erro lexico: '#' e '~' nao pertencem ao alfabeto da linguagem. */
+inteira principal() @
+[
+    inteira x;
+    x receba 5 # 3;
+    respost 0;
+]

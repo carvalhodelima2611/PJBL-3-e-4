@@ -1,0 +1,24 @@
+/* Cobre: declaracao de registro (struct), funcao nao-principal com
+ * parametros e retorno, e chamada de funcao. */
+registro Ponto @
+[
+    inteira x;
+    inteira y;
+]
+
+outrafuncao inteira somar(inteira a, inteira b) @
+[
+    respost a + b;
+]
+
+outrafuncao flut mediaDeTres(inteira a, inteira b, inteira c) @
+[
+    respost (a + b + c) / 3;
+]
+
+inteira principal() @
+[
+    inteira resultado;
+    resultado receba somar(4, 5);
+    respost resultado;
+]

@@ -1,0 +1,7 @@
+/* Erro sintatico: falta o ';' apos a declaracao de x. */
+inteira principal() @
+[
+    inteira x
+    x receba 1;
+    respost 0;
+]
