@@ -65,7 +65,10 @@ void semantico_liberar(Semantico *sem) {
 
 long ram_do_alvo(Alvo alvo) {
     switch (alvo) {
-        case ALVO_UNO: return 2048;         // ATmega328P: 2 KB de SRAM
+        // ATmega328P: 2048 bytes de SRAM, mas o runtime e os textos ja ocupam ~256 bytes
+        // (medido com avr-size) e a pilha precisa de folga para as chamadas: sobram 1600
+        // bytes para as variaveis do programa (experimento em docs/placa.md, secao 5).
+        case ALVO_UNO: return 1600;
         default: return 0;                  // PC e Raspberry Pi (Linux): sem verificacao
     }
 }
@@ -719,10 +722,10 @@ static void verificar_corpo_funcao(Node *func, Semantico *sem) {
 
     // Verificacao de memoria por alvo (PjBL 4, Parte D): locais + globais cabem na RAM?
     long ram = ram_do_alvo(sem->alvo);
-    if (ram > 0 && sem->bytes_locais + sem->bytes_globais > ram) {
+    if (ram > 0 && sem->bytes_globais <= ram && sem->bytes_locais + sem->bytes_globais > ram) {
         char msg[220];
         snprintf(msg, sizeof(msg),
-                 "variaveis locais (%ld bytes) + globais (%ld bytes) excedem a RAM do alvo (%ld bytes) na funcao",
+                 "variaveis locais (%ld bytes) + globais (%ld bytes) excedem a RAM disponivel no alvo (%ld de 2048 bytes) na funcao",
                  sem->bytes_locais, sem->bytes_globais, ram);
         erro_sem(sem, func->linha, msg, func->nome);
     }
@@ -772,7 +775,7 @@ void semantico_verificar(Semantico *sem, Node *raiz) {
     long ram = ram_do_alvo(sem->alvo);
     if (ram > 0 && sem->bytes_globais > ram) {
         char msg[160];
-        snprintf(msg, sizeof(msg), "variaveis globais (%ld bytes) excedem a RAM do alvo (%ld bytes)",
+        snprintf(msg, sizeof(msg), "variaveis globais (%ld bytes) excedem a RAM disponivel no alvo (%ld de 2048 bytes)",
                  sem->bytes_globais, ram);
         erro_sem(sem, 0, msg, "");
     }

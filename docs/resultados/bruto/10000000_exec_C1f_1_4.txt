@@ -1,0 +1,5 @@
+soma_int           4.3992  1001
+somavet_int        1.4236  700032704
+soma_flut          4.9496  10.000001
+somavet_flut       1.4372  49500000.000000
+prodesc_flut       2.9035  12108604.000000

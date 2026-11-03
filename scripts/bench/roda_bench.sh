@@ -102,5 +102,9 @@ opt -O2 -S -mtriple=x86_64-pc-linux-gnu -mcpu=native "$dir/nucleos_C0.ll" -o "$O
 } > "$OUT/tipos_vetoriais.txt"
 cat "$OUT/tipos_vetoriais.txt"
 
+# medicoes brutas (uma linha por nucleo por execucao) para quem quiser conferir a variancia
+rm -rf "$OUT/bruto"; mkdir -p "$OUT/bruto"
+for n in $TAMANHOS; do for f in "$B/$n"/exec_*.txt; do cp "$f" "$OUT/bruto/${n}_$(basename "$f")"; done; done
+
 python3 "$RAIZ/scripts/bench/graficos.py" "$OUT"
 echo "resultados em $OUT"

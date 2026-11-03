@@ -105,6 +105,8 @@ lógicos **não** são aceitos; isso é uma limitação deliberada e não um
 esquecimento, para não extrapolar além do que a gramática formal
 define.
 
+**Atualização (PjBL 3):** os operandos de cada comparação passaram a aceitar **expressões aritméticas**, e não só `VAR`/`NUM`: `cond ( (n // 2) * 2 == n )`, `durante ( i < n - 1 )`. A forma original da especificação continua valendo (é um caso particular). Motivo: no PjBL 3 os programas passaram a ser executados, e a restrição obrigava a criar variáveis temporárias só para comparar uma conta. Um `(` no início de uma condição é decidido olhando à frente (sem consumir tokens): se dentro desse parêntese, no primeiro nível, aparece um comparador ou operador lógico, ele agrupa **condições** (`(a < 1 OU b > 2)`); senão, agrupa uma **expressão** (`(a + 1) < b`).
+
 ### 2.3 Palavra reservada "NÃO" com acento
 
 "NÃO" contém o caractere acentuado `Ã` (dois bytes em UTF-8), o que é
@@ -142,6 +144,8 @@ argumento no sentido contrário (estreitamento) é erro semântico. Em
 expressões aritméticas, o tipo do resultado é o do operando de maior
 amplitude.
 
+**Atualização (PjBL 3):** a exceção é a divisão. `/` sempre dá um resultado real (no mínimo `flut`, mesmo entre dois `inteira`) e `//` sempre dá `inteira` (ver `docs/decisoes_backend.md` 1.2).
+
 ### 2.6 Comentários
 
 A especificação não define comentários. Adotamos comentários de bloco
@@ -161,6 +165,8 @@ validam a declaração de registros, mas o uso de valores desse tipo
 (além da própria declaração) está fora do escopo desta entrega e não
 é uma limitação silenciosa — está documentada aqui.
 
+**Atualização (PjBL 3):** como a geração de código exige registros usáveis (`%struct` + `getelementptr`), a decisão foi revista: variável de registro com `NomeDoRegistro nome;` e acesso a campo com `nome.campo` (leitura e escrita), o que acrescenta o `.` ao alfabeto. Detalhes e limites em `docs/decisoes_backend.md` 2.3.
+
 ### 2.8 Entrada e saída de dados
 
 Nem a tabela de tokens nem a lista de estruturas de Macaronica definem
@@ -172,6 +178,8 @@ tratamos parâmetros de função e o valor de `respost` como o mecanismo
 de entrada/saída de dados de um programa Macaronica (uma função recebe
 dados através dos parâmetros e devolve resultados através de
 `respost`), e os casos de teste válidos exercitam esse mecanismo.
+
+**Atualização (PjBL 3):** com a execução dos programas, entrada e saída passaram a ser **funções embutidas**, já cadastradas na tabela de símbolos antes do programa: `mostrar(...)`, `escreve(...)`, `novalinha()`, `leinteira()`, `leflut()`, `leduplocarpado()` (e, para a placa, `pino_modo`, `pino_escreve`, `pino_le`, `espera`). Elas usam a sintaxe de chamada já decidida no item 1.2, então nenhuma regra sintática nova foi necessária. Os parâmetros da principal continuam sendo um mecanismo de entrada: eles são lidos da entrada padrão (`docs/decisoes_backend.md` 1.5).
 
 ## 3. Regras gerais assumidas (fora da Seção 4.3)
 
@@ -186,3 +194,60 @@ dados através dos parâmetros e devolve resultados através de
 - O escopo mínimo exigido (global + função) foi implementado com
   aninhamento adicional: cada bloco de `cond`/`repete`/`durante` abre
   seu próprio escopo interno, permitindo variáveis locais ao bloco.
+
+## 4. Gramática completa (versão do PjBL 3/4)
+
+Notação: `X*` = zero ou mais, `X?` = opcional, `|` = alternativa, termos entre aspas são tokens literais. O parser é de descida recursiva, LL(1) em quase todo ponto. Os únicos lugares com olhar à frente maior estão anotados.
+
+```
+programa      -> ( registro | funcao | decl_global )*
+registro      -> "registro" ID "@" "[" ( tipo ID ( "," ID )* ";" )* "]"
+funcao        -> "outrafuncao" tipo ID "(" params? ")" "@" bloco
+               | tipo "principal" "(" params? ")" "@" bloco          (LL(2): "tipo principal")
+params        -> tipo ID ( "," tipo ID )*
+decl_global   -> decl | decl_reg                                    (no topo do arquivo = global)
+bloco         -> "[" comando* "]"
+
+comando       -> decl | decl_reg | atrib ";" | cond | repete | durante | respost | chamada ";"
+decl          -> tipo ( "vet" "{" NUM "}" )? ID ( "," ID )* ";"
+decl_reg      -> ID ID ( "," ID )* ";"                               (LL(2): ID seguido de ID)
+atrib         -> ID ( "{" expr "}" | "." ID )? "receba" expr
+cond          -> "cond" "(" condicao ")" "edai" bloco
+                 ( "casocontrario" ( cond | "edai" bloco ) )?
+repete        -> "repete" "(" atrib "," condicao "," atrib ")" "edai" bloco
+durante       -> "durante" "(" condicao ")" "edai" bloco
+respost       -> "respost" expr? ";"
+chamada       -> ID "(" args? ")"                                    (LL(2): ID seguido de "(")
+args          -> expr ( "," expr )*
+
+condicao      -> cond_simples ( ( "OU" | "E" | "XOR" ) cond_simples )*
+cond_simples  -> ( "NAO" | "NÃO" ) cond_simples
+               | "(" condicao ")"                                    (olha a frente: ver 2.2)
+               | expr comparador expr
+comparador    -> "<" | ">" | "==" | "!"
+
+expr          -> termo ( ( "+" | "-" ) termo )*
+termo         -> fator ( ( "*" | "/" | "//" | "^" ) fator )*
+fator         -> NUM | TEXTO | "VER" | "FAL" | "raiz" "(" expr ")" | "(" expr ")" | "-" fator
+               | ID | ID "{" expr "}" | ID "." ID | ID "(" args? ")"
+tipo          -> "inteira" | "flut" | "bool" | "palavra" | "duplocarpado" | "vazio"
+```
+
+Precedência (da maior para a menor): `- unário`; `* / // ^` (mesmo nível, associativos à esquerda); `+ -`; comparadores; `NAO`; `OU E XOR` (mesmo nível, à esquerda).
+
+Regras que ficam no **semântico**, e não na gramática: atribuição a um vetor sem índice só é aceita como operação vetorial da DSL (`docs/dsl.md`); `somavet`, `maxvet` e `prodesc` são funções embutidas; uma declaração no topo do arquivo é global.
+
+## 5. Histórico de alterações após o PjBL 1
+
+| item | o que mudou | onde |
+|---|---|---|
+| 1.1 | índice de vetor passou de `[ ]` para `{ }` | `parser.c` |
+| 2.2 | comparações aceitam expressões | `parser.c` (`parse_cond_simples`) |
+| 2.7 | registros usáveis: `Registro x;` e `x.campo` | `lexer.c`, `parser.c`, `semantic.c` |
+| 2.8 | E/S por funções embutidas | `semantic.c` |
+| novo | variáveis globais | `parser.c` (`parser_analisar`) |
+| novo | `/` é sempre divisão real; `//` sempre inteira | `semantic.c`, `decisoes_backend.md` 1.2 |
+| correção | chamada como comando agora confere o tipo dos argumentos | `semantic.c` |
+| correção | vetor sem índice em expressão escalar agora é erro | `semantic.c` |
+| correção | registro e campo repetidos agora são erro | `semantic.c` |
+| correção | `sincronizar()` parava em `}` em vez de `]` (erros falsos em cascata) | `parser.c` |

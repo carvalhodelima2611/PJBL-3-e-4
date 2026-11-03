@@ -1,0 +1,9 @@
+/* Exemplo do relatorio (Parte B): os mesmos nucleos do enunciado, N = 1024 */
+inteira vet{1024} a, b, c;
+
+inteira principal() @
+[
+    c receba a + b;
+    mostrar(somavet(c));
+    respost 0;
+]

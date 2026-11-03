@@ -12,6 +12,9 @@
  *
  * -DZL_SIMULADOR (usado no simavr): em vez de ficar para sempre no laco final ou
  * piscando, desliga a CPU (cli + sleep), o que faz o simavr encerrar a simulacao. */
+#ifndef F_CPU
+#define F_CPU 16000000UL       /* 16 MHz (antes de <util/delay.h>, que usa este valor) */
+#endif
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <avr/sleep.h>
@@ -21,9 +24,6 @@
 #include "zl_runtime.h"
 #include "zl_comum.h"
 
-#ifndef F_CPU
-#define F_CPU 16000000UL
-#endif
 #define BAUD 9600
 
 /* ---------- serial ---------- */
@@ -54,18 +54,18 @@ static volatile uint8_t *registrador(int32_t pino, uint8_t *bit, int qual) {
 }
 
 void zl_pino_modo(int32_t pino, int32_t modo) {
-    uint8_t b; volatile uint8_t *ddr = registrador(pino, &b, 0), *port = registrador(pino, &b, 1);
+    uint8_t b = 0; volatile uint8_t *ddr = registrador(pino, &b, 0), *port = registrador(pino, &b, 1);
     if (!ddr) return;
     if (modo == 1) *ddr |= (uint8_t)(1 << b);
     else { *ddr &= (uint8_t)~(1 << b); if (modo == 2) *port |= (uint8_t)(1 << b); else *port &= (uint8_t)~(1 << b); }
 }
 void zl_pino_escreve(int32_t pino, int32_t valor) {
-    uint8_t b; volatile uint8_t *port = registrador(pino, &b, 1);
+    uint8_t b = 0; volatile uint8_t *port = registrador(pino, &b, 1);
     if (!port) return;
     if (valor) *port |= (uint8_t)(1 << b); else *port &= (uint8_t)~(1 << b);
 }
 int32_t zl_pino_le(int32_t pino) {
-    uint8_t b; volatile uint8_t *pin = registrador(pino, &b, 2);
+    uint8_t b = 0; volatile uint8_t *pin = registrador(pino, &b, 2);
     return (pin && (*pin & (1 << b))) ? 1 : 0;
 }
 void zl_espera(int32_t ms) { while (ms-- > 0) _delay_ms(1); }

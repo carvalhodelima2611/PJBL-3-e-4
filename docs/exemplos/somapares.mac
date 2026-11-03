@@ -1,0 +1,20 @@
+/* Exemplo do docs/decisoes_backend.md (secao mem2reg): laco + condicional */
+outrafuncao inteira somapares(inteira n) @
+[
+    inteira i, s;
+    s receba 0;
+    repete ( i receba 0, i < n, i receba i + 1 ) edai
+    [
+        cond ( (i // 2) * 2 == i ) edai
+        [
+            s receba s + i;
+        ]
+    ]
+    respost s;
+]
+
+inteira principal() @
+[
+    mostrar(somapares(10));
+    respost 0;
+]

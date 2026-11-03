@@ -57,6 +57,7 @@ typedef struct {
     const Semantico *sem;
     int rd;                 // 1 = rebaixar duplocarpado para float (alvo Uno)
     Tipo ret_atual;
+    int ultima_linha;       // ultimo "; linha N" escrito (nao repete o mesmo)
 } CG;
 
 /* ---------- Utilitarios ---------- */
@@ -120,6 +121,7 @@ static void terminar(CG *cg, const char *fmt, ...) {
 
 // Abre um novo bloco basico. Se o anterior nao terminou, liga com um br (fall-through).
 static void rotulo(CG *cg, const char *nome) {
+    cg->ultima_linha = 0;                       // bloco novo: o proximo comando volta a mostrar a linha
     if (!cg->terminado) buf_printf(&cg->corpo, "  br label %%%s\n", nome);
     buf_printf(&cg->corpo, "%s:\n", nome);
     strncpy(cg->bloco, nome, sizeof(cg->bloco) - 1);
@@ -127,7 +129,8 @@ static void rotulo(CG *cg, const char *nome) {
 }
 
 static void comentario_linha(CG *cg, int linha) {
-    if (!cg->terminado) buf_printf(&cg->corpo, "  ; linha %d\n", linha);
+    if (!cg->terminado && linha != cg->ultima_linha) buf_printf(&cg->corpo, "  ; linha %d\n", linha);
+    cg->ultima_linha = linha;
 }
 
 /* ---------- Escopos (espelham exatamente os escopos do semantico) ---------- */
@@ -712,7 +715,8 @@ static void gerar_funcao(CG *cg, Node *f, Buf *saida) {
     esc_entrar(cg);
 
     char nf[128]; nome_funcao(f->nome, nf);
-    buf_printf(saida, "; linha %d: %s %s\n", f->linha, f->num_valor ? "principal" : "outrafuncao", f->nome);
+    if (f->num_valor) buf_printf(saida, "; linha %d: funcao principal\n", f->linha);
+    else buf_printf(saida, "; linha %d: outrafuncao %s\n", f->linha, f->nome);
     buf_printf(saida, "define %s%s %s(", f->num_valor ? "internal " : "", lt(cg, f->tipo_declarado), nf);
     int primeiro = 1;
     for (Node *p = f->filho1; p; p = p->prox) {
