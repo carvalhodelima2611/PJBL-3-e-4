@@ -61,6 +61,10 @@ test-execucao: $(TARGET)
 test-dsl: $(TARGET)
 	@echo "== PjBL 4: DSL vetorial (MLIR -> LLVM IR) comparada com .esperado =="
 	@scripts/testa_execucao.sh tests/dsl
+	@echo "   (mesmos testes com os nucleos VETORIZADOS no MLIR)"
+	@PIPELINE_MODO=vetor scripts/testa_execucao.sh tests/dsl
+	@echo "   (mesmos testes com os nucleos PARALELOS via OpenMP)"
+	@PIPELINE_MODO=paralelo scripts/testa_execucao.sh tests/dsl
 
 test-placa: $(TARGET)
 	@echo "== PjBL 4: programas da placa no simulador (simavr / qemu-aarch64) =="

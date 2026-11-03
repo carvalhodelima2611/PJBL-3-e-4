@@ -1,0 +1,39 @@
+/* DSL: soma, subtracao e multiplicacao elemento a elemento (c receba a op b),
+ * comparadas com a versao escalar escrita a mao na propria linguagem. */
+inteira vet{8} a, b, c, manual;
+
+inteira principal() @
+[
+    inteira i, erros;
+    repete ( i receba 0, i < 8, i receba i + 1 ) edai
+    [
+        a{i} receba i * 3;
+        b{i} receba 10 - i;
+    ]
+    c receba a + b;                       /* nucleo MLIR */
+    repete ( i receba 0, i < 8, i receba i + 1 ) edai [ manual{i} receba a{i} + b{i}; ]
+    erros receba 0;
+    repete ( i receba 0, i < 8, i receba i + 1 ) edai
+    [
+        escreve(c{i}, " ");
+        cond ( c{i} ! manual{i} ) edai [ erros receba erros + 1; ]
+    ]
+    novalinha();
+    c receba a - b;
+    repete ( i receba 0, i < 8, i receba i + 1 ) edai
+    [
+        escreve(c{i}, " ");
+        cond ( c{i} ! a{i} - b{i} ) edai [ erros receba erros + 1; ]
+    ]
+    novalinha();
+    c receba a * b;
+    repete ( i receba 0, i < 8, i receba i + 1 ) edai
+    [
+        escreve(c{i}, " ");
+        cond ( c{i} ! a{i} * b{i} ) edai [ erros receba erros + 1; ]
+    ]
+    novalinha();
+    a receba a + a;                       /* destino igual a um operando: permitido */
+    mostrar("a + a: ", a{7}, "   diferencas da versao manual: ", erros);
+    respost erros;
+]

@@ -1,0 +1,21 @@
+/* DSL: produto escalar prodesc(a, b), inclusive misto (inteira . flut -> flut) */
+duplocarpado vet{100} x, y;
+
+inteira principal() @
+[
+    inteira i, manual;
+    inteira vet{4} a, b;
+    flut vet{4} f;
+    duplocarpado d;
+    a{0} receba 1; a{1} receba 2; a{2} receba 3; a{3} receba 4;
+    b{0} receba 5; b{1} receba 6; b{2} receba 7; b{3} receba 8;
+    manual receba 0;
+    repete ( i receba 0, i < 4, i receba i + 1 ) edai [ manual receba manual + a{i} * b{i}; ]
+    mostrar("prodesc(a, b) = ", prodesc(a, b), " (manual ", manual, ")");
+    repete ( i receba 0, i < 4, i receba i + 1 ) edai [ f{i} receba 0.5; ]
+    mostrar("prodesc(a, f) = ", prodesc(a, f));
+    repete ( i receba 0, i < 100, i receba i + 1 ) edai [ x{i} receba i; y{i} receba 0.01; ]
+    d receba prodesc(x, y);
+    mostrar("prodesc duplocarpado (100 elementos) = ", d);
+    respost 0;
+]

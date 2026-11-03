@@ -1,0 +1,31 @@
+/* DSL: escalar x vetor (c receba k op a), com k sendo uma expressao qualquer,
+ * e promocao inteira -> flut elemento a elemento. Tamanho 10 (nao multiplo de 8). */
+inteira principal() @
+[
+    inteira i, k, erros;
+    inteira vet{10} a, c;
+    flut vet{10} f, g;
+    repete ( i receba 0, i < 10, i receba i + 1 ) edai [ a{i} receba i + 1; ]
+    k receba 2;
+    c receba (k + 1) * a;                 /* escalar a esquerda */
+    erros receba 0;
+    repete ( i receba 0, i < 10, i receba i + 1 ) edai
+    [
+        escreve(c{i}, " ");
+        cond ( c{i} ! 3 * a{i} ) edai [ erros receba erros + 1; ]
+    ]
+    novalinha();
+    c receba a - 1;                       /* escalar a direita */
+    escreve(c{0}, " ", c{9});
+    novalinha();
+    f receba a * 0.5;                     /* inteira * flut -> flut */
+    g receba f + a;                       /* flut + inteira -> flut */
+    repete ( i receba 0, i < 10, i receba i + 1 ) edai
+    [
+        escreve(g{i}, " ");
+        cond ( g{i} ! f{i} + a{i} ) edai [ erros receba erros + 1; ]
+    ]
+    novalinha();
+    mostrar("diferencas da versao manual: ", erros);
+    respost erros;
+]

@@ -1,0 +1,27 @@
+/* DSL: reducoes somavet(v) e maxvet(v), comparadas com lacos escritos a mao.
+ * Inclui vetor de tamanho 1 (a reducao e o proprio elemento) e valores negativos. */
+inteira principal() @
+[
+    inteira i, s, m, erros;
+    inteira vet{13} a;
+    inteira vet{1} um;
+    flut vet{5} f;
+    repete ( i receba 0, i < 13, i receba i + 1 ) edai [ a{i} receba (i * 7) // 1 - 40; ]
+    a{6} receba 99;
+    s receba 0;
+    m receba a{0};
+    repete ( i receba 0, i < 13, i receba i + 1 ) edai
+    [
+        s receba s + a{i};
+        cond ( a{i} > m ) edai [ m receba a{i}; ]
+    ]
+    erros receba 0;
+    cond ( somavet(a) ! s ) edai [ erros receba erros + 1; ]
+    cond ( maxvet(a) ! m ) edai [ erros receba erros + 1; ]
+    mostrar("somavet = ", somavet(a), " (manual ", s, "), maxvet = ", maxvet(a), " (manual ", m, ")");
+    um{0} receba -7;
+    mostrar("vetor de tamanho 1: soma ", somavet(um), ", maximo ", maxvet(um));
+    repete ( i receba 0, i < 5, i receba i + 1 ) edai [ f{i} receba 0.25 * i - 1; ]
+    mostrar("flut: soma ", somavet(f), ", maximo ", maxvet(f));
+    respost erros;
+]

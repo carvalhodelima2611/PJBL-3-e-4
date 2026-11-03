@@ -1,0 +1,11 @@
+/* ERRO SEMANTICO esperado: reducao sobre vetor de bool e produto escalar de tamanhos diferentes */
+inteira principal() @
+[
+    bool vet{3} b;
+    inteira vet{3} a;
+    inteira vet{4} c;
+    inteira s;
+    s receba somavet(b);
+    s receba prodesc(a, c);
+    respost 0;
+]

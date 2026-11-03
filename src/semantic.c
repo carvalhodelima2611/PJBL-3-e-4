@@ -274,11 +274,13 @@ static Tipo verificar_reducao(Node *no, Semantico *sem, Embutida bi) {
         erro_sem(sem, no->linha, "o argumento deve ser o nome de um vetor numerico em", no->nome);
         return TIPO_INDEFINIDO;
     }
+    if (!eh_numerico(t1)) return TIPO_INDEFINIDO;           // ja reportado: evita erro em cascata
     if (bi != BI_PRODESC) return t1;                        // soma/maximo: mesmo tipo do elemento
     if (!operando_vetor(no->lista->prox, sem, &t2, &n2)) {
         erro_sem(sem, no->linha, "o argumento 2 deve ser o nome de um vetor numerico em", no->nome);
         return TIPO_INDEFINIDO;
     }
+    if (!eh_numerico(t2)) return TIPO_INDEFINIDO;
     if (n1 != n2) {
         char msg[160];
         snprintf(msg, sizeof(msg), "vetores de tamanhos diferentes (%d e %d) em", n1, n2);

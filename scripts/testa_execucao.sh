@@ -7,6 +7,7 @@
 # Se existir NOME.entrada, ela vai para a entrada padrao. A ultima linha da
 # saida comparada e "[codigo de saida: N]".
 # Uso: scripts/testa_execucao.sh DIRETORIO [DIRETORIO...]
+#      PIPELINE_MODO=vetor|paralelo scripts/testa_execucao.sh tests/dsl   (nucleos vetorizados/paralelos)
 set -u
 RAIZ="$(cd "$(dirname "$0")/.." && pwd)"
 COMP="$RAIZ/macaronica"
@@ -39,15 +40,17 @@ for dir in "$@"; do
     fi
     prog_ll="$ll"
     if [ -f "$mlir" ]; then                       # tem nucleos vetoriais: rebaixa e junta
-        if ! "$RAIZ/scripts/pipeline.sh" "$mlir" "$B/$n.nucleos.ll" > /dev/null 2> "$B/$n.pipeline.err"; then
+        if ! "$RAIZ/scripts/pipeline.sh" "$mlir" "$B/$n.nucleos.ll" "${PIPELINE_MODO:-base}" > /dev/null 2> "$B/$n.pipeline.err"; then
             echo "  [FALHOU] $f (pipeline MLIR)"; cat "$B/$n.pipeline.err"; falhou=$((falhou+1)); continue
         fi
         llvm-link -S "$ll" "$B/$n.nucleos.ll" -o "$B/$n.junto.ll" || { falhou=$((falhou+1)); continue; }
         prog_ll="$B/$n.junto.ll"
     fi
     llvm-link "$prog_ll" "$B/rt.ll" -o "$B/$n.bc" 2>/dev/null
-    roda "$dir/$n.entrada" lli "$B/$n.bc" > "$B/$n.saida.lli"
-    clang -Wno-override-module -O0 "$prog_ll" "$B/rt.o" -lm -o "$B/$n.exe" 2>/dev/null
+    OMP=""; LLI_OMP=""
+    if [ "${PIPELINE_MODO:-base}" = paralelo ]; then OMP="-fopenmp"; LLI_OMP="--load=$(ls "$(llvm-config-18 --libdir 2>/dev/null || echo /usr/lib/llvm-18/lib)"/libomp.so* | head -1)"; fi
+    roda "$dir/$n.entrada" lli $LLI_OMP "$B/$n.bc" > "$B/$n.saida.lli"
+    clang -Wno-override-module -O0 $OMP "$prog_ll" "$B/rt.o" -lm -o "$B/$n.exe" 2>/dev/null
     roda "$dir/$n.entrada" "$B/$n.exe" > "$B/$n.saida.nativo"
     if diff -q "$esp" "$B/$n.saida.lli" > /dev/null && diff -q "$esp" "$B/$n.saida.nativo" > /dev/null; then
         echo "  [OK]     $f"; ok=$((ok+1))

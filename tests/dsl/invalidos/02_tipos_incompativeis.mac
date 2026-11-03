@@ -1,0 +1,8 @@
+/* ERRO SEMANTICO esperado: resultado flut (inteira + flut) num vetor inteira (estreitamento) */
+inteira principal() @
+[
+    inteira vet{4} a, c;
+    flut vet{4} f;
+    c receba a + f;
+    respost 0;
+]
