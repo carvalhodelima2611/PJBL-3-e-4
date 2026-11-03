@@ -1,0 +1,6 @@
+Tipos vetoriais na IR final de cada configuracao (ocorrencias):
+  ir_final_C1               32 <8 x float> 81 <8 x i32> 
+  ir_final_C1f              153 <8 x float> 81 <8 x i32> 
+  ir_final_C2               98 <8 x float> 64 <8 x i1> 241 <8 x i32> 
+  ir_opt_O2_sem_triple     
+  ir_opt_O2_com_triple      32 <8 x float> 81 <8 x i32> 

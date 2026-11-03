@@ -1,0 +1,15 @@
+/* Placa: erro de execucao da linguagem. O indice so e conhecido em execucao; ao passar
+ * do fim do vetor, o runtime mostra a mensagem com a linha e (na placa) pisca o LED 13. */
+inteira principal() @
+[
+    inteira i, soma;
+    inteira vet{4} v;
+    soma receba 0;
+    repete ( i receba 0, i < 6, i receba i + 1 ) edai
+    [
+        v{i} receba i + 1;
+        soma receba soma + v{i};
+        mostrar("v{", i, "} ok, soma = ", soma);
+    ]
+    respost 0;
+]

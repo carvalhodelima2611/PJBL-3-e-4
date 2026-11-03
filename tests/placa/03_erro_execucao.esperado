@@ -1,0 +1,7 @@
+v{0} ok, soma = 1
+v{1} ok, soma = 3
+v{2} ok, soma = 6
+v{3} ok, soma = 10
+
+[ERRO DE EXECUCAO] indice de vetor fora dos limites (linha 10)
+[codigo de saida: 102]

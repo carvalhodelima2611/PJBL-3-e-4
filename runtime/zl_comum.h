@@ -14,7 +14,7 @@ static void zl_formata_real(double v, char *buf) {
     if (v != v) { buf[0] = 'n'; buf[1] = 'a'; buf[2] = 'n'; buf[3] = 0; return; }
     if (v < 0) { *p++ = '-'; v = -v; }
     if (v > 1e15) {                                  /* grande demais para 64 bits: notacao cientifica */
-        if (v > 1e300 * 1e300 || v - v != 0) { p[0] = 'i'; p[1] = 'n'; p[2] = 'f'; p[3] = 0; return; }
+        if (v - v != 0) {                            /* infinito: inf - inf = nan */ p[0] = 'i'; p[1] = 'n'; p[2] = 'f'; p[3] = 0; return; }
         int e = 0;
         while (v >= 10.0) { v /= 10.0; e++; }
         uint32_t m = (uint32_t)(v * 10000.0 + 0.5);

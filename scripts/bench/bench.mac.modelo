@@ -1,0 +1,18 @@
+/* Programa de benchmark: gera os 5 nucleos medidos no estudo de otimizacao.
+ * O tamanho TAM e trocado pelo roda_bench.sh (10^6 e 10^7). Vetores globais:
+ * com 10^7 elementos eles nao caberiam na pilha. A ordem dos comandos define o
+ * nome dos nucleos (dsl.soma.1, dsl.somavet.2, ...) que o harness.c chama. */
+inteira vet{TAM} a, b, c;
+flut vet{TAM} fa, fb, fc;
+
+inteira principal() @
+[
+    inteira s;
+    flut fs;
+    c receba a + b;               /* dsl.soma.1     elemento a elemento, inteira */
+    s receba somavet(a);          /* dsl.somavet.2  reducao inteira              */
+    fc receba fa + fb;            /* dsl.soma.3     elemento a elemento, flut    */
+    fs receba somavet(fa);        /* dsl.somavet.4  reducao flut                 */
+    fs receba prodesc(fa, fb);    /* dsl.prodesc.5  produto escalar flut         */
+    respost 0;
+]

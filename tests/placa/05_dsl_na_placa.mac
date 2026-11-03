@@ -1,0 +1,16 @@
+/* Placa (opcional do nivel Excelente): nucleos da extensao vetorial gerados via MLIR
+ * rodando no AVR. O mesmo nucleo do PC, rebaixado sem SIMD (o AVR nao tem). */
+inteira vet{16} a, b, c;
+flut vet{16} f;
+
+inteira principal() @
+[
+    inteira i;
+    repete ( i receba 0, i < 16, i receba i + 1 ) edai [ a{i} receba i; b{i} receba 100 - i; f{i} receba 0.5 * i; ]
+    c receba a + b;
+    mostrar("c{0} = ", c{0}, ", c{15} = ", c{15});
+    c receba 2 * c;
+    mostrar("somavet(2 * c) = ", somavet(c), ", maxvet(a) = ", maxvet(a));
+    mostrar("prodesc(a, b) = ", prodesc(a, b), ", somavet(f) = ", somavet(f));
+    respost 0;
+]

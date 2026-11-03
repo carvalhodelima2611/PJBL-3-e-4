@@ -1,0 +1,24 @@
+/* Placa: funcao recursiva (torres de Hanoi e Fibonacci) e aritmetica de 32 bits num processador de 8 bits */
+outrafuncao inteira hanoi(inteira n, inteira de, inteira para, inteira via) @
+[
+    cond ( n == 0 ) edai [ respost 0; ]
+    respost hanoi(n - 1, de, via, para) + 1 + hanoi(n - 1, via, para, de);
+]
+
+outrafuncao inteira fib(inteira n) @
+[
+    cond ( n < 2 ) edai [ respost n; ]
+    respost fib(n - 1) + fib(n - 2);
+]
+
+inteira principal() @
+[
+    inteira n;
+    repete ( n receba 1, n < 11, n receba n + 3 ) edai
+    [
+        mostrar("hanoi(", n, ") = ", hanoi(n, 1, 3, 2), " movimentos");
+    ]
+    mostrar("fib(20) = ", fib(20));
+    mostrar("2 ^ 30 = ", 2 ^ 30, "  (inteira e sempre 32 bits, ate no AVR)");
+    respost 7;
+]

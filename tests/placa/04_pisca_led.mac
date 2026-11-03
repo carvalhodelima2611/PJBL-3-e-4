@@ -1,0 +1,23 @@
+/* Placa: E/S fisica com as funcoes embutidas pino_modo, pino_escreve, pino_le e espera.
+ * Pisca o LED da placa (pino 13) 5 vezes e confere, lendo o proprio pino, o valor escrito.
+ * Na placa de verdade, depois disso o LED acende enquanto o botao do pino 2 estiver
+ * apertado (botao ligado entre o pino 2 e o GND; o pull-up interno segura o pino em 1). */
+inteira LED;
+
+inteira principal() @
+[
+    inteira i, lido;
+    LED receba 13;
+    pino_modo(LED, 1);                    /* 1 = saida */
+    repete ( i receba 1, i < 6, i receba i + 1 ) edai
+    [
+        pino_escreve(LED, 1);
+        lido receba pino_le(LED);
+        mostrar("piscada ", i, ": LED ligado (lido ", lido, ")");
+        espera(150);
+        pino_escreve(LED, 0);
+        espera(150);
+    ]
+    mostrar("LED desligado, leitura = ", pino_le(LED));
+    respost 0;
+]

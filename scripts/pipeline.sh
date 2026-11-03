@@ -19,6 +19,12 @@ TMP="$(mktemp -d)"; trap 'rm -rf "$TMP"' EXIT
 nivel() { [ -n "$NIVEIS" ] && mkdir -p "$NIVEIS" && cp "$1" "$NIVEIS/$2.mlir" || true; }
 
 cp "$ENTRADA" "$TMP/1.mlir"
+# REASSOC=1: marca as somas/multiplicacoes reais com fastmath<reassoc> (permite
+# reordenar). E o equivalente, no nivel da IR, ao -ffast-math do C: o clang -ffast-math
+# aplicado a um .ll pronto NAO muda as instrucoes que ja existem (so vale no front-end C).
+if [ "${REASSOC:-0}" = 1 ]; then
+  sed -E -i 's/(arith\.(addf|mulf) [^:]*) : (f32|f64)/\1 fastmath<reassoc> : \3/' "$TMP/1.mlir"
+fi
 nivel "$TMP/1.mlir" 1_affine
 
 # ---------- Passo 1: transformacoes no nivel affine (dependem do modo) ----------

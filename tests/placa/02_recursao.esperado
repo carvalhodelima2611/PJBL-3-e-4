@@ -1,0 +1,7 @@
+hanoi(1) = 1 movimentos
+hanoi(4) = 15 movimentos
+hanoi(7) = 127 movimentos
+hanoi(10) = 1023 movimentos
+fib(20) = 6765
+2 ^ 30 = 1073741824  (inteira e sempre 32 bits, ate no AVR)
+[codigo de saida: 7]

@@ -1,0 +1,8 @@
+/* ERRO SEMANTICO esperado com --alvo=uno: as variaveis locais (vetor de 600 inteiras =
+ * 2400 bytes) nao cabem nos 2048 bytes de RAM do ATmega328P. No PC este programa e valido. */
+inteira principal() @
+[
+    inteira vet{600} grande;
+    grande{0} receba 1;
+    respost grande{0};
+]

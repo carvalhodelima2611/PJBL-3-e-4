@@ -24,7 +24,7 @@ export PATH := $(LLVM_BIN):$(PATH)
 PROG ?= tests/execucao/04_recursao.mac
 PLACA ?= uno
 
-.PHONY: all clean test test-pjbl1 test-execucao test-dsl test-placa run bench placa
+.PHONY: all clean test test-pjbl1 test-execucao test-dsl test-placa run bench placa placa-todos
 
 all: $(TARGET)
 
@@ -72,7 +72,8 @@ test-placa: $(TARGET)
 
 # ---------- Execucao no PC ----------
 run: $(TARGET)
-	@scripts/macc.sh $(PROG) $(BUILD_DIR)/prog && echo "-- executando $(PROG) --" && ./$(BUILD_DIR)/prog
+	@scripts/macc.sh $(PROG) $(BUILD_DIR)/prog && echo "-- executando $(PROG) --" && \
+		{ ./$(BUILD_DIR)/prog; echo "[codigo de saida: $$?]"; }
 
 # ---------- PjBL 4 ----------
 bench: $(TARGET)
@@ -80,6 +81,10 @@ bench: $(TARGET)
 
 placa: $(TARGET)
 	@scripts/placa.sh $(PROG) $(PLACA)
+
+# todos os programas de tests/placa para as duas placas (executaveis de entrega em placa/)
+placa-todos: $(TARGET)
+	@for f in tests/placa/*.mac; do scripts/placa.sh $$f uno && scripts/placa.sh $$f rpi; done
 
 clean:
 	rm -rf $(BUILD_DIR) $(TARGET)
