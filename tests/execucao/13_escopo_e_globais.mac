@@ -1,0 +1,28 @@
+/* escopos aninhados (sombreamento), variaveis globais e funcao vazio */
+inteira contador;
+inteira x;
+
+outrafuncao vazio incrementa(inteira quanto) @
+[
+    contador receba contador + quanto;
+    cond ( contador > 100 ) edai [ respost; ]   /* respost sem valor em funcao vazio */
+    mostrar("contador agora = ", contador);
+]
+
+inteira principal() @
+[
+    inteira x;                    /* local: esconde a global x */
+    x receba 1;
+    cond ( x == 1 ) edai
+    [
+        inteira x;                /* outro x, so deste bloco (comeca zerado) */
+        mostrar("x do bloco = ", x);
+        x receba 99;
+    ]
+    mostrar("x da principal = ", x);
+    incrementa(5);
+    incrementa(10);
+    incrementa(200);
+    mostrar("contador final = ", contador);
+    respost 0;
+]

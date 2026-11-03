@@ -1,0 +1,22 @@
+/* funcoes recursivas: fatorial e Fibonacci */
+outrafuncao inteira fatorial(inteira n) @
+[
+    cond ( n < 2 ) edai [ respost 1; ]
+    respost n * fatorial(n - 1);
+]
+
+outrafuncao inteira fib(inteira n) @
+[
+    cond ( n < 2 ) edai [ respost n; ]
+    respost fib(n - 1) + fib(n - 2);
+]
+
+inteira principal() @
+[
+    inteira i;
+    repete ( i receba 0, i < 11, i receba i + 1 ) edai
+    [
+        mostrar(i, "! = ", fatorial(i), "   fib(", i, ") = ", fib(i));
+    ]
+    respost fatorial(5);
+]

@@ -1,0 +1,16 @@
+/* entrada e saida: leinteira(), leflut() e parametros da principal lidos da entrada */
+inteira principal(inteira quantos) @
+[
+    inteira i, soma, v;
+    flut f;
+    soma receba 0;
+    repete ( i receba 0, i < quantos, i receba i + 1 ) edai
+    [
+        v receba leinteira();
+        soma receba soma + v;
+    ]
+    f receba leflut();
+    mostrar("li ", quantos, " numeros, soma = ", soma);
+    mostrar("flut lido: ", f, ", dobro: ", f * 2);
+    respost soma;
+]

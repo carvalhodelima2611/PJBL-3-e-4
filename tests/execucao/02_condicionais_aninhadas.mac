@@ -1,0 +1,50 @@
+/* cond / casocontrario cond / casocontrario, aninhados e com OU, E, XOR, NAO */
+outrafuncao palavra classifica(inteira nota) @
+[
+    cond ( nota > 89 ) edai
+    [
+        respost "A";
+    ]
+    casocontrario cond ( nota > 69 ) edai
+    [
+        cond ( nota > 79 ) edai
+        [
+            respost "B+";
+        ]
+        casocontrario edai
+        [
+            respost "B";
+        ]
+    ]
+    casocontrario cond ( nota > 49 ) edai
+    [
+        respost "C";
+    ]
+    casocontrario edai
+    [
+        respost "F";
+    ]
+]
+
+inteira principal() @
+[
+    inteira i;
+    inteira vet{6} notas;
+    notas{0} receba 95;
+    notas{1} receba 85;
+    notas{2} receba 72;
+    notas{3} receba 60;
+    notas{4} receba 10;
+    notas{5} receba 100;
+    repete ( i receba 0, i < 6, i receba i + 1 ) edai
+    [
+        mostrar(notas{i}, " -> ", classifica(notas{i}));
+    ]
+    i receba 5;
+    cond ( i > 0 E i < 10 ) edai [ mostrar("5 esta entre 0 e 10"); ]
+    cond ( i < 0 OU i == 5 ) edai [ mostrar("OU funciona"); ]
+    cond ( i > 0 XOR i > 3 ) edai [ mostrar("XOR errado"); ] casocontrario edai [ mostrar("XOR: os dois verdadeiros -> FAL"); ]
+    cond ( NAO i == 4 ) edai [ mostrar("NAO funciona"); ]
+    cond ( i ! 4 ) edai [ mostrar("! e diferente"); ]
+    respost 0;
+]

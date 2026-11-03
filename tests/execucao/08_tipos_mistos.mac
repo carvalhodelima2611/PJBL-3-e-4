@@ -1,0 +1,19 @@
+/* expressoes mistas inteira/flut/duplocarpado: promocao implicita (sitofp, fpext) */
+inteira principal() @
+[
+    inteira i;
+    flut f;
+    duplocarpado d;
+    i receba 7;
+    f receba 2.5;
+    d receba 0.125;
+    mostrar("inteira + flut = ", i + f);              /* flut */
+    mostrar("flut * duplocarpado = ", f * d);         /* duplocarpado */
+    mostrar("inteira + duplocarpado = ", i + d);
+    f receba i;                                       /* ampliacao na atribuicao */
+    d receba f;
+    mostrar("f = ", f, ", d = ", d);
+    cond ( i < 7.5 ) edai [ mostrar("7 < 7.5 compara como flut"); ]
+    cond ( f == 7 ) edai [ mostrar("7.0 == 7"); ]
+    respost 0;
+]

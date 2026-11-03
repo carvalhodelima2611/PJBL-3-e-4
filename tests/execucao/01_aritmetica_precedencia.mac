@@ -1,0 +1,16 @@
+/* Precedencia e associatividade: * / // ^ antes de + -, tudo associativo a esquerda */
+inteira principal() @
+[
+    inteira a, b, c;
+    a receba 2 + 3 * 4;          /* 14, nao 20 */
+    b receba 10 - 3 - 2;         /* (10 - 3) - 2 = 5 */
+    c receba (2 + 3) * 4;        /* parenteses mudam a ordem: 20 */
+    mostrar("2 + 3 * 4 = ", a);
+    mostrar("10 - 3 - 2 = ", b);
+    mostrar("(2 + 3) * 4 = ", c);
+    mostrar("100 // 7 // 2 = ", 100 // 7 // 2);   /* (100 // 7) // 2 = 7 */
+    mostrar("-5 + 2 = ", -5 + 2);
+    mostrar("2 * -3 = ", 2 * -3);
+    mostrar("1 - 2 * 3 + 4 = ", 1 - 2 * 3 + 4);
+    respost 0;
+]

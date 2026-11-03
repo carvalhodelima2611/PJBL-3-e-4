@@ -1,0 +1,17 @@
+/* A diferenca entre / (divisao real, sempre) e // (divisao inteira, trunca para zero) */
+inteira principal() @
+[
+    inteira a, b, q;
+    flut f;
+    a receba 7;
+    b receba 2;
+    mostrar("7 / 2  = ", a / b);          /* real: 3.5 (inteira / inteira -> flut) */
+    mostrar("7 // 2 = ", a // b);         /* inteira: 3 */
+    mostrar("-7 / 2  = ", -7 / 2);
+    mostrar("-7 // 2 = ", -7 // 2);       /* trunca para zero: -3 (como em C) */
+    mostrar("7.9 // 2 = ", 7.9 // 2);     /* com real: divide e trunca -> 3 */
+    f receba a / b;                       /* ok: o resultado e flut */
+    q receba a // b;                      /* "q receba a / b;" seria erro semantico (flut -> inteira) */
+    mostrar("f = ", f, ", q = ", q);
+    respost 0;
+]

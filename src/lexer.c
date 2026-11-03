@@ -197,6 +197,7 @@ static Token proximo_token_bruto(Lexer *lx) {
         case '>': t.tipo = TOK_MAIOR; lx_avancar(lx); return t;
         case '<': t.tipo = TOK_MENOR; lx_avancar(lx); return t;
         case '!': t.tipo = TOK_DIFERENTE; lx_avancar(lx); return t;   // "!" sozinho = diferente
+        case '.': t.tipo = TOK_PONTO; lx_avancar(lx); return t;       // acesso a campo: aluno.idade
         default: break;       // '=' sozinho, '%', '#', etc. nao estao aqui -> caem no erro abaixo
     }
 
@@ -275,6 +276,7 @@ const char *token_nome(TipoToken tipo) {
         case TOK_DIFERENTE: return "!";
         case TOK_MAIOR: return ">";
         case TOK_MENOR: return "<";
+        case TOK_PONTO: return ".";
         case TOK_FIM: return "FIM";
         case TOK_INVALIDO: return "token invalido";
     }

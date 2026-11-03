@@ -1,0 +1,35 @@
+/* vetor: preenche, soma e acha o maior elemento */
+inteira vet{8} dados;                 /* vetor GLOBAL */
+
+outrafuncao inteira maior() @
+[
+    inteira i, m;
+    m receba dados{0};
+    repete ( i receba 1, i < 8, i receba i + 1 ) edai
+    [
+        cond ( dados{i} > m ) edai [ m receba dados{i}; ]
+    ]
+    respost m;
+]
+
+inteira principal() @
+[
+    inteira i, soma;
+    flut vet{3} medias;
+    repete ( i receba 0, i < 8, i receba i + 1 ) edai
+    [
+        dados{i} receba (i * 37 + 11) // 1 - (i * 37 + 11) // 50 * 50;   /* "resto" de 50 sem % */
+    ]
+    soma receba 0;
+    repete ( i receba 0, i < 8, i receba i + 1 ) edai
+    [
+        escreve(dados{i}, " ");
+        soma receba soma + dados{i};
+    ]
+    novalinha();
+    mostrar("soma = ", soma, ", maior = ", maior());
+    medias{0} receba soma / 8;
+    medias{2} receba 0.5;
+    mostrar("media = ", medias{0}, ", medias{1} comeca zerado: ", medias{1}, ", ", medias{2});
+    respost 0;
+]

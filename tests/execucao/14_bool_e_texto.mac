@@ -1,0 +1,25 @@
+/* bool, palavra, curto-circuito do E/OU (o lado direito nao e avaliado se nao precisar) */
+inteira vet{3} v;
+
+outrafuncao bool ehpar(inteira n) @
+[
+    cond ( (n // 2) * 2 == n ) edai [ respost VER; ]
+    respost FAL;
+]
+
+inteira principal() @
+[
+    inteira i;
+    bool b;
+    palavra p;
+    mostrar("texto vazio: [", p, "], bool inicial: ", b);
+    p receba "Macaronica";
+    b receba ehpar(4);
+    mostrar(p, " ", b, " ", ehpar(7));
+    i receba 10;
+    cond ( i < 3 E v{i} > 0 ) edai [ mostrar("nao"); ]        /* v{10} nunca e lido: E para no FAL */
+    casocontrario edai [ mostrar("curto-circuito do E evitou v{10}"); ]
+    cond ( i > 3 OU v{i} > 0 ) edai [ mostrar("curto-circuito do OU evitou v{10}"); ]
+    cond ( b == VER ) edai [ mostrar("b == VER"); ]
+    respost 0;
+]

@@ -1,0 +1,6 @@
+texto vazio: [], bool inicial: FAL
+Macaronica VER FAL
+curto-circuito do E evitou v{10}
+curto-circuito do OU evitou v{10}
+b == VER
+[codigo de saida: 0]

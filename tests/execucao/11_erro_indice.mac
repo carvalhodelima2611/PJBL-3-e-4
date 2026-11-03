@@ -1,0 +1,12 @@
+/* Erro de execucao: indice calculado em tempo de execucao passa do fim do vetor */
+inteira principal() @
+[
+    inteira i;
+    inteira vet{5} v;
+    repete ( i receba 0, i < 10, i receba i + 1 ) edai
+    [
+        v{i} receba i * i;
+        mostrar("v{", i, "} = ", v{i});
+    ]
+    respost 0;
+]

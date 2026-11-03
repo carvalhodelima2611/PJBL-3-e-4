@@ -1,0 +1,12 @@
+/* Erro de execucao: divisao inteira por zero (o divisor so e conhecido em execucao) */
+outrafuncao inteira divide(inteira a, inteira b) @
+[
+    respost a // b;
+]
+inteira principal() @
+[
+    mostrar("10 // 3 = ", divide(10, 3));
+    mostrar("10 // 0 = ", divide(10, 0));
+    mostrar("nunca chega aqui");
+    respost 0;
+]

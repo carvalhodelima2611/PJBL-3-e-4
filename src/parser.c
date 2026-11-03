@@ -196,6 +196,14 @@ static Node *parse_fator(Parser *p) {
             casar(p, TOK_FECHA_CHAVE, "'}'");
             return no;
         }
+        if (lookahead(p)->tipo == TOK_PONTO) {              // ID . campo -> leitura de campo de registro
+            avancar(p);
+            Node *no = criar_no(ND_CAMPO_EXPR, linha);
+            strcpy(no->nome, nome);
+            Token c = casar(p, TOK_IDENTIFICADOR, "o nome do campo");
+            strncpy(no->campo, c.lexema, sizeof(no->campo) - 1);
+            return no;
+        }
         Node *no = criar_no(ND_VAR, linha);                 // so o ID -> variavel simples
         strcpy(no->nome, nome);
         return no;
@@ -254,6 +262,21 @@ static Node *parse_args(Parser *p) {
 /* ---------- Condicoes ----------
  * A especificacao so define VAR/NUM COMPARADOR VAR/NUM. O grupo estendeu para
  * combinar comparacoes com OU/E/XOR e negar com NAO (decisoes.md, item 2.2). */
+// Um '(' no inicio de uma condicao pode abrir um GRUPO DE CONDICOES "(a < 1 OU b > 2)"
+// ou uma EXPRESSAO "(a + 1) < b". Decide olhando a frente (sem consumir): se dentro
+// desse parentese, no primeiro nivel, aparece um comparador ou operador logico, e condicao.
+static int parentese_e_condicao(Parser *p) {
+    int prof = 0;
+    for (int n = 0; ; n++) {
+        TipoToken t = ver_frente(p, n)->tipo;
+        if (t == TOK_FIM) return 0;
+        if (t == TOK_ABRE_PARENTESE) prof++;
+        else if (t == TOK_FECHA_PARENTESE) { if (--prof == 0) return 0; }
+        else if (prof == 1 && (t == TOK_MENOR || t == TOK_MAIOR || t == TOK_IGUAL || t == TOK_DIFERENTE ||
+                               t == TOK_OU || t == TOK_E || t == TOK_XOR || t == TOK_NAO)) return 1;
+    }
+}
+
 static Node *parse_cond_simples(Parser *p) {
     int linha = lookahead(p)->linha;
 
@@ -263,19 +286,17 @@ static Node *parse_cond_simples(Parser *p) {
         no->filho1 = parse_cond_simples(p);         // RECURSAO: nega o que vem depois
         return no;
     }
-    if (lookahead(p)->tipo == TOK_ABRE_PARENTESE) { // ( condicao ) -> agrupa CONDICOES, nao contas
+    if (lookahead(p)->tipo == TOK_ABRE_PARENTESE && parentese_e_condicao(p)) {   // ( condicao )
         avancar(p);
         Node *no = parse_condicao(p);
         casar(p, TOK_FECHA_PARENTESE, "')'");
         return no;
     }
 
-    Token *t = lookahead(p);
-    if (t->tipo != TOK_IDENTIFICADOR && t->tipo != TOK_NUMERO &&
-        t->tipo != TOK_VER && t->tipo != TOK_FAL) {
-        erro_sintatico(p, "uma variavel ou numero (operando de condicao)");
-    }
-    Node *op_esq = parse_fator(p);                  // operando e FATOR (nao expr) -> "a < b + 1" e erro
+    // operando COMPARADOR operando. A especificacao so mostra VAR/NUM dos dois lados;
+    // no PjBL 3 generalizamos para EXPRESSOES aritmeticas (a forma original continua
+    // valida, ver docs/decisoes.md 2.2):  cond ( (n // 2) * 2 == n )
+    Node *op_esq = parse_expr(p);
 
     Token *cmp = lookahead(p);
     if (cmp->tipo != TOK_MENOR && cmp->tipo != TOK_MAIOR &&
@@ -286,7 +307,7 @@ static Node *parse_cond_simples(Parser *p) {
     strcpy(no->nome, token_nome(cmp->tipo));        // guarda o comparador ("<", "==", ...)
     avancar(p);
     no->filho1 = op_esq;
-    no->filho2 = parse_fator(p);
+    no->filho2 = parse_expr(p);
     return no;
 }
 
@@ -348,7 +369,13 @@ static Node *parse_atrib_sem_pv(Parser *p) {
     Token id = casar(p, TOK_IDENTIFICADOR, "um identificador");
 
     Node *no;
-    if (lookahead(p)->tipo == TOK_ABRE_CHAVE) {     // v{i} receba ...  (chaves DEPOIS de um ID = INDICE)
+    if (lookahead(p)->tipo == TOK_PONTO) {          // a.campo receba ...
+        avancar(p);
+        no = criar_no(ND_ATRIB_CAMPO, linha);
+        strcpy(no->nome, id.lexema);
+        Token c = casar(p, TOK_IDENTIFICADOR, "o nome do campo");
+        strncpy(no->campo, c.lexema, sizeof(no->campo) - 1);
+    } else if (lookahead(p)->tipo == TOK_ABRE_CHAVE) {     // v{i} receba ...  (chaves DEPOIS de um ID = INDICE)
         avancar(p);
         no = criar_no(ND_ATRIB_VETOR, linha);
         strcpy(no->nome, id.lexema);
@@ -361,6 +388,26 @@ static Node *parse_atrib_sem_pv(Parser *p) {
     casar(p, TOK_RECEBA, "'receba'");
     no->filho1 = parse_expr(p);                     // filho1 = valor atribuido
     return no;
+}
+
+// Declaracao de variavel de registro:  NomeRegistro nome (, nome)* ;   ex: Aluno a, b;
+static Node *parse_decl_reg(Parser *p) {
+    int linha = lookahead(p)->linha;
+    Token tipo_reg = casar(p, TOK_IDENTIFICADOR, "o nome do registro");
+    Node *cabeca = NULL, *atual = NULL;
+    for (;;) {
+        Token id = casar(p, TOK_IDENTIFICADOR, "um identificador");
+        Node *no = criar_no(ND_DECL_REG, linha);
+        strcpy(no->nome, id.lexema);
+        strncpy(no->nome_reg, tipo_reg.lexema, sizeof(no->nome_reg) - 1);
+        no->tipo_declarado = TIPO_REGISTRO;
+        if (!cabeca) cabeca = no; else atual->prox = no;
+        atual = no;
+        if (lookahead(p)->tipo == TOK_VIRGULA) { avancar(p); continue; }
+        break;
+    }
+    casar(p, TOK_PONTO_VIRGULA, "';'");
+    return cabeca;
 }
 
 static Node *parse_atrib(Parser *p) {               // atribuicao normal = sem_pv + ';'
@@ -468,6 +515,7 @@ static Node *parse_comando(Parser *p) {
     if (t == TOK_IDENTIFICADOR) {
         // x receba 5;  e  f(x);  comecam os dois com ID -> olha UM token a frente para decidir
         if (ver_frente(p, 1)->tipo == TOK_ABRE_PARENTESE) return parse_chamada_stmt(p);
+        if (ver_frente(p, 1)->tipo == TOK_IDENTIFICADOR) return parse_decl_reg(p);   // Aluno a;  (ID ID)
         return parse_atrib(p);
     }
 
@@ -518,13 +566,17 @@ static Node *parse_registro(Parser *p) {
         if (eh_tipo(lookahead(p)->tipo)) {          // cada campo: tipo nome ;
             int linha_campo = lookahead(p)->linha;
             Tipo tipo_campo = parse_tipo(p);
-            Token nome_campo = casar(p, TOK_IDENTIFICADOR, "o nome do campo");
+            for (;;) {                              // aceita varios nomes: inteira x, y;  (igual a declaracao)
+                Token nome_campo = casar(p, TOK_IDENTIFICADOR, "o nome do campo");
+                Node *campo = criar_no(ND_CAMPO, linha_campo);
+                strcpy(campo->nome, nome_campo.lexema);
+                campo->tipo_declarado = tipo_campo;
+                if (!cabeca) cabeca = campo; else atual->prox = campo;
+                atual = campo;
+                if (lookahead(p)->tipo == TOK_VIRGULA) { avancar(p); continue; }
+                break;
+            }
             casar(p, TOK_PONTO_VIRGULA, "';'");
-            Node *campo = criar_no(ND_CAMPO, linha_campo);
-            strcpy(campo->nome, nome_campo.lexema);
-            campo->tipo_declarado = tipo_campo;
-            if (!cabeca) cabeca = campo; else atual->prox = campo;
-            atual = campo;
         } else {
             erro_sintatico(p, "um campo do registro (tipo nome;)");
             sincronizar(p);
@@ -595,15 +647,22 @@ Node *parser_analisar(Parser *p) {
         Node *no = NULL;
         if (lookahead(p)->tipo == TOK_REGISTRO) {
             no = parse_registro(p);
-        } else if (lookahead(p)->tipo == TOK_OUTRAFUNCAO || eh_tipo(lookahead(p)->tipo)) {
-            no = parse_funcao(p);                   // comeca com tipo -> e a principal
+        } else if (lookahead(p)->tipo == TOK_OUTRAFUNCAO ||
+                   (eh_tipo(lookahead(p)->tipo) && ver_frente(p, 1)->tipo == TOK_PRINCIPAL)) {
+            no = parse_funcao(p);                   // "tipo principal" -> e a principal
+        } else if (eh_tipo(lookahead(p)->tipo)) {
+            no = parse_decl(p);                     // "tipo nome;" no topo -> variavel GLOBAL [PjBL 3]
+        } else if (lookahead(p)->tipo == TOK_IDENTIFICADOR &&
+                   ver_frente(p, 1)->tipo == TOK_IDENTIFICADOR) {
+            no = parse_decl_reg(p);                 // "Aluno a;" no topo -> registro GLOBAL
         } else {
-            erro_sintatico(p, "'registro', 'outrafuncao' ou um tipo (declaracao de funcao)");
+            erro_sintatico(p, "'registro', 'outrafuncao', 'tipo principal' ou uma declaracao global");
             sincronizar(p);
         }
         if (no) {
             if (!raiz->lista) raiz->lista = no; else atual->prox = no;   // pendura na raiz
             atual = no;
+            while (atual->prox) atual = atual->prox;    // "inteira a, b;" global devolve uma lista
         }
         if (p->pos == pos_antes) {                  // cinto de seguranca de novo
             if (lookahead(p)->tipo == TOK_FIM) break;

@@ -1,0 +1,19 @@
+/* ^ e raiz(): inteira ^ inteira e exata (zl_pot_inteira); com real usa llvm.pow; raiz usa llvm.sqrt */
+inteira principal() @
+[
+    inteira i;
+    duplocarpado h;
+    mostrar("2 ^ 10 = ", 2 ^ 10);
+    mostrar("3 ^ 0 = ", 3 ^ 0, ", 2 ^ -1 = ", 2 ^ -1);
+    mostrar("2.0 ^ 0.5 = ", 2.0 ^ 0.5);
+    mostrar("1.5 ^ 2 = ", 1.5 ^ 2);
+    mostrar("raiz(16) = ", raiz(16));
+    h receba raiz(3 ^ 2 + 4 ^ 2);
+    mostrar("hipotenusa(3, 4) = ", h);
+    repete ( i receba 1, i < 6, i receba i + 1 ) edai
+    [
+        escreve(raiz(i), " ");
+    ]
+    novalinha();
+    respost 0;
+]

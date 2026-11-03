@@ -1,0 +1,8 @@
+v{0} = 0
+v{1} = 1
+v{2} = 4
+v{3} = 9
+v{4} = 16
+
+[ERRO DE EXECUCAO] indice de vetor fora dos limites (linha 8)
+[codigo de saida: 102]

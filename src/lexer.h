@@ -34,6 +34,8 @@ typedef enum {
     /* Comparadores */
     TOK_IGUAL, TOK_DIFERENTE, TOK_MAIOR, TOK_MENOR,  // IGUAL = "==", DIFERENTE = "!" sozinho
 
+    TOK_PONTO,              // '.' -> acesso a campo de registro (aluno.idade) [PjBL 3]
+
     TOK_FIM, TOK_INVALIDO   // FIM = fim do arquivo; INVALIDO = caractere que gerou erro lexico
 } TipoToken;
 

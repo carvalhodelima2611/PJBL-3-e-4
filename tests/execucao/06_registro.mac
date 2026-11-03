@@ -1,0 +1,37 @@
+/* registro (struct): declaracao, variavel local e global, leitura e escrita de campos */
+registro Ponto @
+[
+    inteira x, y;
+]
+
+registro Aluno @
+[
+    palavra nome;
+    inteira idade;
+    flut nota;
+    bool aprovado;
+]
+
+Ponto origem;                         /* registro GLOBAL (comeca zerado) */
+
+outrafuncao inteira distancia2(inteira x, inteira y) @
+[
+    respost (x - origem.x) * (x - origem.x) + (y - origem.y) * (y - origem.y);
+]
+
+inteira principal() @
+[
+    Aluno a;
+    Ponto p;
+    a.nome receba "Ana";
+    a.idade receba 20;
+    a.nota receba 8.5;
+    cond ( a.nota > 6 ) edai [ a.aprovado receba VER; ]
+    mostrar(a.nome, ", ", a.idade, " anos, nota ", a.nota, ", aprovado: ", a.aprovado);
+    p.x receba 3;
+    p.y receba 4;
+    mostrar("distancia ao quadrado de (", p.x, ", ", p.y, ") ate a origem: ", distancia2(p.x, p.y));
+    origem.x receba 1;
+    mostrar("depois de mover a origem: ", distancia2(p.x, p.y));
+    respost 0;
+]
